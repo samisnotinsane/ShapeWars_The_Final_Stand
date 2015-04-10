@@ -1,0 +1,104 @@
+package shapewars;
+
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+import org.lwjgl.input.Mouse;
+import org.newdawn.slick.*;
+import org.newdawn.slick.state.*;
+import javax.swing.*;
+public class MainMenu extends BasicGameState {
+	String mouse = "Mouse pointer coordinates: null";
+	// initial position of A1
+	int A1X=0;
+	int A1Y=0;
+	// initial position of B2
+	int C2X=1000;
+	int C2Y=0;
+	
+	ArrayList <Image> imgList = new ArrayList<Image>();
+	
+	// class constructor
+	public MainMenu(int state) {
+		System.out.println("Entered state: 0");
+	}
+	
+	// class initialisation
+	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
+		imgList.add(new Image("res/background/menu.png"));
+		imgList.add(new Image("res/characters/R_P1/Grp_A/A1_R.png"));
+		imgList.add(new Image("res/characters/L_P2/Grp_C/C2_L.png"));
+	}
+	
+	// draws graphics on screen
+	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
+		// draw & place the background in the given position
+		g.drawImage(imgList.get(0), 0, 0);
+		g.drawImage(imgList.get(1), A1X, A1Y);
+		g.drawImage(imgList.get(2), C2X, C2Y);
+		
+		// debug print: mouse position coordinates
+		g.drawString(mouse, 50, 450);
+	}
+	
+	// updates graphics on screen
+	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
+		Input input = gc.getInput(); // input object for keyboard/mouse IO
+		// get X/Y position of mouse
+		int xpos = Mouse.getX();
+		int ypos = Mouse.getY();
+		// print mouse position coordinates
+		mouse = "Mouse pointer coordinates (x,y): (" + xpos + "," + ypos+")";
+		
+		// move A1 up if 'A' is pressed
+		if(input.isKeyDown(Input.KEY_A)) { A1Y -= 1;}
+		// move A1 down if 'D' is pressed		
+		if(input.isKeyDown(Input.KEY_D)) { A1Y += 1;}
+		// TODO: Implement 'fire' for key 'S'
+		
+		
+		// move C2 up if 'J' is pressed
+		if(input.isKeyDown(Input.KEY_J)) { C2Y -= 1;}
+		// move C2 down if 'L' is pressed
+		if(input.isKeyDown(Input.KEY_L)) { C2Y += 1;}
+		// TODO: Implement 'fire' for key 'K'		
+
+		// 'play' button click event handler
+		if((xpos>376 && xpos<675)&&(ypos>30&&ypos<100)) {
+			if(input.isMouseButtonDown(0)) {
+				System.out.println("Transitioning to State: 1");
+				sbg.enterState(1);
+			}
+		}
+		
+		// 'exit' button click event handler		
+		if((xpos>27 && xpos<107)&&(ypos>30&&ypos<100)) {
+			if(input.isMouseButtonDown(0)) {
+				exitConfirmationDialog();
+			}
+		}
+		
+		
+		// exit game if 'esc' key is pressed
+		if(input.isKeyDown(Input.KEY_ESCAPE)) { exitConfirmationDialog(); return;}
+	}
+	
+	// returns ID for this state
+	public int getID() {
+		return 0;
+	}
+	
+	public void exitConfirmationDialog() {
+		String message="Do you really wish to exit?";
+		String title="ShapeWars";
+		int retVal=0;
+		retVal = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION);
+		if(retVal==JOptionPane.YES_OPTION) {
+			System.exit(0);
+		}
+		else {
+			return;
+		}
+	}
+
+}
